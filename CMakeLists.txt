@@ -4,7 +4,7 @@ project(libprefix_tree)
 
 #enable_testing()
 
-#set( SRC_DIR ${PROJECT_SOURCE_DIR}/src )
+set( SRC_DIR ${PROJECT_SOURCE_DIR}/src )
 
 #set( DOC_DIR ${PROJECT_SOURCE_DIR}/doc )
 set( INC_DIR ${PROJECT_SOURCE_DIR}/include )
@@ -32,13 +32,12 @@ include_directories( ${INC_DIR} )
 
 set(
     PREFIX_TREE_SRC
-    ${INC_DIR}/prefix_tree/prefix_tree.h
-    ${INC_DIR}/prefix_tree/prefix_tree_map.h
+    ${SRC_DIR}/prefix_tree.cpp
 )
 
 add_library(
     prefix_tree
-    INTERFACE
+    SHARED
     ${PREFIX_TREE_SRC}
 )
 
