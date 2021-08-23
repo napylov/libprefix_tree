@@ -10,6 +10,10 @@ namespace prefix_tree
 {
 
 
+prefix_tree::prefix_tree() : next(), flag( NODE_FLAG::NO_FLAGS )
+{
+}
+
 
 prefix_tree *prefix_tree::new_node()
 {
@@ -23,7 +27,10 @@ std::pair<prefix_tree&, bool> prefix_tree::append_node( const char *key )
         return std::pair<prefix_tree&, bool>( *this, false );
 
     if ( !*key )
+    {
+        this->flag = NODE_FLAG::FINITE_NODE;
         return std::pair<prefix_tree&, bool>( *this, true );
+    }
     
     auto it = next.find( *key );
     if ( it != next.end() && it->second )

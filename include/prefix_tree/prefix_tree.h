@@ -20,24 +20,32 @@ class prefix_tree
 {
 public:
     typedef std::unique_ptr<prefix_tree>    ptr;
-  
+
+protected:
+    enum NODE_FLAG : uint8_t
+    {
+        NO_FLAGS = 0,
+        FINITE_NODE
+    };
+
 protected:
     std::map<char, ptr>                     next;
+    NODE_FLAG                               flag;
 
 public:
-    prefix_tree() = default;
-    ~prefix_tree() = default;
+    prefix_tree();
+    virtual ~prefix_tree() = default;
 
 
-    inline void append( const char *key )
+    inline bool append( const char *key )
     {
-        append_node( key );
+        return append_node( key ).second;
     }
     
     
-    inline void append( const std::string &key )
+    inline bool append( const std::string &key )
     {
-        append_node( key );
+        return append_node( key ).second;
     }    
 
 
