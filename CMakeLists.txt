@@ -2,14 +2,14 @@ cmake_minimum_required(VERSION 3.0)
 
 project(libprefix_tree)
 
-#enable_testing()
+enable_testing()
 
 set( SRC_DIR ${PROJECT_SOURCE_DIR}/src )
 
 #set( DOC_DIR ${PROJECT_SOURCE_DIR}/doc )
 set( INC_DIR ${PROJECT_SOURCE_DIR}/include )
 
-#set( TEST_SUBDIR test )
+set( TEST_SUBDIR test )
 #set( TEST_DIR ${PROJECT_SOURCE_DIR}/${TEST_SUBDIR} )
 
 if( NOT CMAKE_BUILD_TYPE )
@@ -26,7 +26,7 @@ endif()
 
 set( CMAKE_CXX_FLAGS "-Wall ${BUILD_FLAGS} -std=c++17 -D_GLIBCXX_USE_CXX11_ABI=0" )
 
-#find_library( GTEST gtest )
+find_library( GTEST gtest )
 
 include_directories( ${INC_DIR} )
 
@@ -48,7 +48,7 @@ add_library(
 #    ${PTHREAD}
 #)
 
-#add_subdirectory( test ${TEST_SUBDIR} )
+add_subdirectory( test ${TEST_SUBDIR} )
 #add_subdirectory( examples )
 
 #set_property(TARGET prefix_tree PROPERTY CXX_STANDARD 17)

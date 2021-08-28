@@ -49,15 +49,15 @@ public:
     }    
 
 
-    inline bool exists( const char *key ) const
+    inline bool exists( const char *key, bool finite_node = true ) const
     {
         return find_node( key ) != nullptr;
     }
     
     
-    inline bool exists( const std::string &key ) const
+    inline bool exists( const std::string &key, bool finite_node = true ) const
     {
-        return find_node( key.c_str() ) != nullptr;
+        return find_node( key.c_str(), finite_node ) != nullptr;
     }
 
 protected:
@@ -70,7 +70,7 @@ protected:
         return append_node( key.c_str() );
     }
 
-    const prefix_tree* find_node( const char *key ) const;
+    const prefix_tree* find_node( const char *key, bool finite_node = true ) const;
 };
 
 

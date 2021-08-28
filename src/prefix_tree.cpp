@@ -45,17 +45,21 @@ std::pair<prefix_tree&, bool> prefix_tree::append_node( const char *key )
 
 
 
-const prefix_tree* prefix_tree::find_node( const char *key ) const
+const prefix_tree* prefix_tree::find_node( const char *key, bool finite_node ) const
 {
     if ( !key )
         return nullptr;
         
     if ( !*key )
+    {
+        if ( finite_node )
+            return flag == NODE_FLAG::FINITE_NODE ? this : nullptr;
         return this;
+    }
     
     auto it = next.find( *key );
     if ( it != next.end() && it->second )
-        return it->second->find_node( key + 1 );
+        return it->second->find_node( key + 1, finite_node );
         
     return nullptr;
 }
