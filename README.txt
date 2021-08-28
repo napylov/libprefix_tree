@@ -1,1 +1,1 @@
-C++ library for prefix tree
+C++ library for prefix tree.
