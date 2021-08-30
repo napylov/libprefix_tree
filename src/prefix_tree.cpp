@@ -91,6 +91,14 @@ prefix_tree::iterator& prefix_tree::iterator::operator++()
 }
 
 
+prefix_tree::iterator& prefix_tree::iterator::operator++( int unused )
+{
+    shift_iterator( true );
+    return *this;
+}
+
+
+
 void prefix_tree::iterator::shift_iterator( bool forward )
 {
     if ( !node )
@@ -105,6 +113,8 @@ void prefix_tree::iterator::shift_iterator( bool forward )
         else
             increment_via_next( node->next.rbegin(), node->next.rend(), node, forward );
     }
+    else
+        node = nullptr;
 
     if ( !node )
     {
@@ -155,9 +165,32 @@ prefix_tree::iterator& prefix_tree::iterator::operator--()
 }
 
 
+prefix_tree::iterator& prefix_tree::iterator::operator--( int unused )
+{
+    shift_iterator( false );
+    return *this;
+}
+
+
 prefix_tree* prefix_tree::iterator::operator->()
 {
     return node;
+}
+
+
+bool prefix_tree::iterator::operator==( const iterator &right ) const
+{
+    return
+            node == right.node                           &&
+            (!node || finite_nodes_only == right.finite_nodes_only) &&
+            symbols == right.symbols
+    ;
+}
+
+
+std::string prefix_tree::iterator::get_key() const
+{
+    return std::string( symbols.begin(), symbols.end() );
 }
 
 

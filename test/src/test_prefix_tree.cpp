@@ -38,3 +38,52 @@ TEST_F( test_prefix_tree, test_positive )
     ASSERT_TRUE( tree->exists( TEST_KEY.substr( 0, 1 ), false ) );
     ASSERT_TRUE( tree->exists( TEST_KEY2.substr( 0, 3 ), false ) );
 }
+
+
+TEST_F( test_prefix_tree, test_iterator )
+{
+    static const std::string TEST_KEY   = "abc";
+    static const std::string TEST_KEY1  = "def";
+    static const std::string TEST_KEY2  = "abcdef";
+
+    ASSERT_TRUE( tree->append( TEST_KEY ) );
+    ASSERT_TRUE( tree->append( TEST_KEY1 ) );
+    ASSERT_TRUE( tree->append( TEST_KEY2 ) );
+
+    auto it = tree->begin( true );
+
+    ASSERT_EQ( TEST_KEY, it.get_key() );
+    ++it;
+    ASSERT_EQ( TEST_KEY2, it.get_key() );
+    ++it;
+    ASSERT_EQ( TEST_KEY1, it.get_key() );
+    ++it;
+
+    ASSERT_EQ( it, tree->end() );
+}
+
+/*
+TEST_F( test_prefix_tree, test_iterator_decrement )
+{
+    static const std::string TEST_KEY   = "abc";
+    static const std::string TEST_KEY1  = "def";
+    static const std::string TEST_KEY2  = "abcdef";
+
+    ASSERT_TRUE( tree->append( TEST_KEY ) );
+    ASSERT_TRUE( tree->append( TEST_KEY1 ) );
+    ASSERT_TRUE( tree->append( TEST_KEY2 ) );
+
+    auto it = tree->begin( true );
+
+    ASSERT_EQ( TEST_KEY, it.get_key() );
+    ++it;
+    ASSERT_EQ( TEST_KEY2, it.get_key() );
+    it++;
+    ASSERT_EQ( TEST_KEY1, it.get_key() );
+
+    it--;
+    ASSERT_EQ( TEST_KEY2, it.get_key() );
+    --it;
+    ASSERT_EQ( TEST_KEY, it.get_key() );
+}
+*/

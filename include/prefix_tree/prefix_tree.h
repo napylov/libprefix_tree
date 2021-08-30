@@ -59,7 +59,12 @@ public:
 
         iterator& operator++();
         iterator& operator--();
+        iterator& operator++( int unused );
+        iterator& operator--( int unused );
         prefix_tree* operator->();
+        bool operator==( const iterator &right ) const;
+
+        std::string get_key() const;
     private:
         void shift_iterator( bool forward );
 
