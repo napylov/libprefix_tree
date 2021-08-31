@@ -3,6 +3,7 @@
  * BSD 2-clause license.
  */
 
+#include <iostream>
 #include "prefix_tree/prefix_tree.h"
 
 
@@ -86,20 +87,20 @@ prefix_tree::iterator::iterator( prefix_tree *node_, bool finite_nodes_only_, co
 
 prefix_tree::iterator& prefix_tree::iterator::operator++()
 {
-    shift_iterator( true );
+    shift_iterator();
     return *this;
 }
 
 
 prefix_tree::iterator& prefix_tree::iterator::operator++( int unused )
 {
-    shift_iterator( true );
+    shift_iterator();
     return *this;
 }
 
 
 
-void prefix_tree::iterator::shift_iterator( bool forward )
+void prefix_tree::iterator::shift_iterator()
 {
     if ( !node )
         return;
@@ -108,10 +109,7 @@ void prefix_tree::iterator::shift_iterator( bool forward )
 
     if ( !node->next.empty() )
     {
-        if ( forward )
-            increment_via_next( node->next.begin(), node->next.end(), node, forward );
-        else
-            increment_via_next( node->next.rbegin(), node->next.rend(), node, forward );
+        increment_via_next( node->next.begin(), node->next.end(), node );
     }
     else
         node = nullptr;
@@ -119,14 +117,16 @@ void prefix_tree::iterator::shift_iterator( bool forward )
     if ( !node )
     {
         node = cur;
-        increment_via_parent( forward );
+        increment_via_parent();
     }
 }
 
 
 
-void prefix_tree::iterator::increment_via_parent( bool forward )
+void prefix_tree::iterator::increment_via_parent()
 {
+    std::cout << "DEBUG: increment_via_parent(): key = " << get_key() << "\n";
+
     if ( !node->parent )
     {
         node = nullptr;
@@ -137,37 +137,25 @@ void prefix_tree::iterator::increment_via_parent( bool forward )
     char c = static_cast<char>( symbols.back() );
     symbols.pop_back();
 
-    if ( forward )
-    {
-        auto next_it = cur->next.find( c );
-        auto next_it_end = cur->next.end();
+    auto next_it = cur->next.find( c );
+    auto next_it_end = cur->next.end();
 
-        ++next_it;
+    ++next_it;
 
-        increment_via_parent( next_it, next_it_end, cur, forward );
-    }
-    else
-    {
-        std::map<char, ptr>::reverse_iterator next_it( cur->next.find( c ) );
-        auto next_it_end = cur->next.rend();
-
-        ++next_it;
-
-        increment_via_parent( next_it, next_it_end, cur, forward );
-    }
+    increment_via_parent( next_it, next_it_end, cur );
 }
 
 
 prefix_tree::iterator& prefix_tree::iterator::operator--()
 {
-    shift_iterator( false );
+    //shift_iterator( false );
     return *this;
 }
 
 
 prefix_tree::iterator& prefix_tree::iterator::operator--( int unused )
 {
-    shift_iterator( false );
+    //shift_iterator( false );
     return *this;
 }
 

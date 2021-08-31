@@ -81,6 +81,8 @@ TEST_F( test_prefix_tree, test_iterator_decrement )
     it++;
     ASSERT_EQ( TEST_KEY1, it.get_key() );
 
+    std::cout << "--------------\n";
+
     it--;
     ASSERT_EQ( TEST_KEY2, it.get_key() );
     --it;

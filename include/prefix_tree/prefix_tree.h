@@ -12,6 +12,7 @@
 #include <map>
 #include <stack>
 
+#include <iostream>
 
 namespace prefix_tree
 {
@@ -66,73 +67,75 @@ public:
 
         std::string get_key() const;
     private:
-        void shift_iterator( bool forward );
+        void shift_iterator();
 
         template <typename iterator_type>
         void increment_via_next(
                 iterator_type it,
                 iterator_type it_end,
-                prefix_tree *cur,
-                bool forward
+                prefix_tree *cur
         )
         {
+            std::cout << "DEBUG: increment_via_next(): ";
+            if ( it != it_end )
+                std::cout << ( it->first ) << "\n";
+            else
             {
-                auto setup_node = [&] ()
-                {
-                    symbols.push_back( static_cast<unsigned char>( it->first ) );
-                    node = it->second.get();
-                };
-
-                if ( !finite_nodes_only )
-                {
-                    setup_node();
-                    return;
-                }
-
-                while ( it != it_end )
-                {
-                    node = cur; // node may be setup to nullptr in previous iteration.
-
-                    setup_node();
-                    if ( it->second->is_finite_node() )
-                        return;
-
-                    if ( !it->second->next.empty() )
-                    {
-                        if ( forward )
-                            increment_via_next( it->second->next.begin(), it->second->next.end(), it->second.get(), forward );
-                        else
-                            increment_via_next( it->second->next.rbegin(), it->second->next.rend(), it->second.get(), forward );
-
-                        if ( node )
-                            return;
-                        else if ( !symbols.empty() )
-                            symbols.pop_back();
-                    }
-
-                    ++it;
-                }
-
-                node = nullptr;
+                std::cout << "end\n";
             }
+
+            auto setup_node = [&] ()
+            {
+                symbols.push_back( static_cast<unsigned char>( it->first ) );
+                node = it->second.get();
+            };
+
+            if ( !finite_nodes_only )
+            {
+                setup_node();
+                return;
+            }
+
+            while ( it != it_end )
+            {
+                std::cout << "DEBUG: current char " << it->first << "\n";
+                node = cur; // node may be setup to nullptr in previous iteration.
+
+                setup_node();
+                if ( it->second->is_finite_node() )
+                    return;
+
+                if ( !it->second->next.empty() )
+                {
+                    increment_via_next( it->second->next.begin(), it->second->next.end(), it->second.get() );
+
+                    if ( node )
+                        return;
+                    else if ( !symbols.empty() )
+                        symbols.pop_back();
+                }
+            }
+
+            node = nullptr;
         }
 
-        void increment_via_parent( bool forward );
+        void increment_via_parent();
 
         template <typename iterator_type>
-        void increment_via_parent( iterator_type it, iterator_type it_end, prefix_tree *cur, bool forward )
+        void increment_via_parent( iterator_type it, iterator_type it_end, prefix_tree *cur )
         {
+            std::cout << "DEBUG: first char " << it->first << " finite_nodes_only " << finite_nodes_only << "\n";
             if ( !finite_nodes_only )
             {
                 node = it != it_end ? it->second.get() : nullptr;
                 return;
             }
 
-            increment_via_next( it, it_end, cur, forward );
+            increment_via_next( it, it_end, cur );
             if ( !node )
             {
                 node = cur;
-                increment_via_parent( forward );
+                increment_via_parent();
             }
         }
     };
