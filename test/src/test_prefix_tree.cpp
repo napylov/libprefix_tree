@@ -62,7 +62,7 @@ TEST_F( test_prefix_tree, test_iterator )
     ASSERT_EQ( it, tree->end() );
 }
 
-/*
+
 TEST_F( test_prefix_tree, test_iterator_decrement )
 {
     static const std::string TEST_KEY   = "abc";
@@ -85,7 +85,8 @@ TEST_F( test_prefix_tree, test_iterator_decrement )
 
     it--;
     ASSERT_EQ( TEST_KEY2, it.get_key() );
+    std::cout << "--\n";
     --it;
     ASSERT_EQ( TEST_KEY, it.get_key() );
 }
-*/
+

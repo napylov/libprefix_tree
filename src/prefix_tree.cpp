@@ -87,20 +87,20 @@ prefix_tree::iterator::iterator( prefix_tree *node_, bool finite_nodes_only_, co
 
 prefix_tree::iterator& prefix_tree::iterator::operator++()
 {
-    shift_iterator();
+    shift_iterator( true );
     return *this;
 }
 
 
 prefix_tree::iterator& prefix_tree::iterator::operator++( int unused )
 {
-    shift_iterator();
+    shift_iterator( true );
     return *this;
 }
 
 
 
-void prefix_tree::iterator::shift_iterator()
+void prefix_tree::iterator::shift_iterator( bool forward )
 {
     if ( !node )
         return;
@@ -109,15 +109,22 @@ void prefix_tree::iterator::shift_iterator()
 
     if ( !node->next.empty() )
     {
-        increment_via_next( node->next.begin(), node->next.end(), node );
+        if ( forward )
+            increment_via_next( node->next.begin(), node->next.end(), node );
+        else
+            decrement_via_next( node->next.rbegin(), node->next.rend(), node );
     }
     else
         node = nullptr;
 
     if ( !node )
     {
+        std::cout << "DEBUG: shift_iterator() !node\n";
         node = cur;
-        increment_via_parent();
+        if ( forward )
+            increment_via_parent();
+        else
+            decrement_via_parent();
     }
 }
 
@@ -146,16 +153,127 @@ void prefix_tree::iterator::increment_via_parent()
 }
 
 
+void prefix_tree::iterator::decrement_via_parent()
+{
+    std::cout << "DEBUG: decrement_via_parent(): key = " << get_key() << "\n";
+
+    if ( !node->parent )
+    {
+        node = nullptr;
+        return;
+    }
+
+    prefix_tree *cur = node->parent;
+    char c = static_cast<char>( symbols.back() );
+    symbols.pop_back();
+
+    next_nodes_container::reverse_iterator next_it( cur->next.find( c ) );
+    next_nodes_container::reverse_iterator next_it_end = cur->next.rend();
+
+    next_nodes_container::reverse_iterator tmp = next_it;
+
+    ++next_it;
+
+    if ( next_it == tmp )
+    {
+        node = cur;
+        if ( !finite_nodes_only || cur->is_finite_node() )
+            return;
+        decrement_via_parent();
+    }
+    else
+        decrement_via_parent( next_it, next_it_end, cur );
+}
+
+
+void prefix_tree::iterator::decrement_via_parent(
+        next_nodes_container::reverse_iterator it,
+        next_nodes_container::reverse_iterator it_end,
+        prefix_tree *cur
+)
+{
+    std::cout << "DEBUG: first char " << it->first << " finite_nodes_only " << finite_nodes_only << "\n";
+
+    if ( !cur->next.empty() )
+        decrement_via_next( it, it_end, cur );
+    else
+        node = nullptr;
+
+    if ( !node )
+    {
+        std::cout << "DEBUG: decrement_via_parent(...) !node\n";
+        if ( !finite_nodes_only || cur->is_finite_node() )
+            node = cur;
+        else
+            decrement_via_parent();
+    }
+
+}
+
+
+
 prefix_tree::iterator& prefix_tree::iterator::operator--()
 {
-    //shift_iterator( false );
+    shift_iterator( false );
     return *this;
 }
 
 
+void prefix_tree::iterator::decrement_via_next(
+        next_nodes_container::reverse_iterator it,
+        next_nodes_container::reverse_iterator it_end,
+        prefix_tree *cur
+)
+{
+    std::cout << "DEBUG: decrement_via_next()\n";
+
+    while ( true )
+    {
+        std::cout << "DEBUG: char " << it->first << "\n";
+        if ( it->second->next.empty() )
+        {
+            std::cout << "DEBUG: it->second->next.empty()\n";
+            if ( it->second->is_finite_node() || !finite_nodes_only )
+            {
+                std::cout << "DEBUG: return it->second\n";
+                node = it->second.get();
+                symbols.push_back( static_cast<unsigned char>( it->first ) );
+                return;
+            }
+            else
+                node = nullptr;
+        }
+        else
+        {
+            symbols.push_back( static_cast<unsigned char>( it->first ) );
+            decrement_via_next( it->second->next.rbegin(), it->second->next.rend(), it->second.get() );
+
+            if ( node )
+            {
+                std::cout << "DEBUG: decrement_via_next() node return\n";
+                return;
+            }
+
+            node = cur;
+            symbols.pop_back();
+        }
+
+        if ( it == it_end )
+        {
+            std::cout << "DEBUG: it == it_end\n";
+            node = nullptr;
+            return;
+        }
+
+        ++it;
+    }
+}
+
+
+
 prefix_tree::iterator& prefix_tree::iterator::operator--( int unused )
 {
-    //shift_iterator( false );
+    shift_iterator( false );
     return *this;
 }
 

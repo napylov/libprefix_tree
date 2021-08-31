@@ -27,6 +27,8 @@ public:
     /// @brief ptr          Pointer to prefix_tree (unique_ptr).
     typedef std::unique_ptr<prefix_tree>    ptr;
 
+    typedef std::map<char, ptr>             next_nodes_container;
+
 protected:
     /// @brief NODE_FLAG    Enumeration for describe kind of node (finite or note).
     enum NODE_FLAG : uint8_t
@@ -67,7 +69,7 @@ public:
 
         std::string get_key() const;
     private:
-        void shift_iterator();
+        void shift_iterator( bool forward );
 
         template <typename iterator_type>
         void increment_via_next(
@@ -120,6 +122,7 @@ public:
         }
 
         void increment_via_parent();
+        void decrement_via_parent();
 
         template <typename iterator_type>
         void increment_via_parent( iterator_type it, iterator_type it_end, prefix_tree *cur )
@@ -138,6 +141,20 @@ public:
                 increment_via_parent();
             }
         }
+
+
+        void decrement_via_next(
+                next_nodes_container::reverse_iterator it,
+                next_nodes_container::reverse_iterator it_end,
+                prefix_tree *cur
+        );
+
+        void decrement_via_parent(
+                next_nodes_container::reverse_iterator it,
+                next_nodes_container::reverse_iterator it_end,
+                prefix_tree *cur
+        );
+
     };
 
 
