@@ -129,6 +129,56 @@ void prefix_tree::iterator::shift_iterator( bool forward )
 }
 
 
+void prefix_tree::iterator::increment_via_next(
+        next_nodes_container::iterator it,
+        next_nodes_container::iterator it_end,
+        prefix_tree *cur
+)
+{
+    std::cout << "DEBUG: increment_via_next(): ";
+    if ( it != it_end )
+        std::cout << ( it->first ) << "\n";
+    else
+    {
+        std::cout << "end\n";
+    }
+
+    auto setup_node = [&] ()
+    {
+        symbols.push_back( static_cast<unsigned char>( it->first ) );
+        node = it->second.get();
+    };
+
+    if ( !finite_nodes_only )
+    {
+        setup_node();
+        return;
+    }
+
+    while ( it != it_end )
+    {
+        std::cout << "DEBUG: current char " << it->first << "\n";
+        node = cur; // node may be setup to nullptr in previous iteration.
+
+        setup_node();
+        if ( it->second->is_finite_node() )
+            return;
+
+        if ( !it->second->next.empty() )
+        {
+            increment_via_next( it->second->next.begin(), it->second->next.end(), it->second.get() );
+
+            if ( node )
+                return;
+            else if ( !symbols.empty() )
+                symbols.pop_back();
+        }
+    }
+
+    node = nullptr;
+}
+
+
 
 void prefix_tree::iterator::increment_via_parent()
 {
@@ -151,6 +201,29 @@ void prefix_tree::iterator::increment_via_parent()
 
     increment_via_parent( next_it, next_it_end, cur );
 }
+
+
+void prefix_tree::iterator::increment_via_parent(
+        next_nodes_container::iterator it,
+        next_nodes_container::iterator it_end,
+        prefix_tree *cur
+)
+{
+    std::cout << "DEBUG: first char " << it->first << " finite_nodes_only " << finite_nodes_only << "\n";
+    if ( !finite_nodes_only )
+    {
+        node = it != it_end ? it->second.get() : nullptr;
+        return;
+    }
+
+    increment_via_next( it, it_end, cur );
+    if ( !node )
+    {
+        node = cur;
+        increment_via_parent();
+    }
+}
+
 
 
 void prefix_tree::iterator::decrement_via_parent()

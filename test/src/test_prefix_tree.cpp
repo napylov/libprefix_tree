@@ -45,16 +45,24 @@ TEST_F( test_prefix_tree, test_iterator )
     static const std::string TEST_KEY   = "abc";
     static const std::string TEST_KEY1  = "def";
     static const std::string TEST_KEY2  = "abcdef";
+    static const std::string TEST_KEY3  = "abcdeg";
+    static const std::string TEST_KEY4  = "abceee";
 
     ASSERT_TRUE( tree->append( TEST_KEY ) );
     ASSERT_TRUE( tree->append( TEST_KEY1 ) );
     ASSERT_TRUE( tree->append( TEST_KEY2 ) );
+    ASSERT_TRUE( tree->append( TEST_KEY3 ) );
+    ASSERT_TRUE( tree->append( TEST_KEY4 ) );
 
     auto it = tree->begin( true );
 
     ASSERT_EQ( TEST_KEY, it.get_key() );
     ++it;
     ASSERT_EQ( TEST_KEY2, it.get_key() );
+    ++it;
+    ASSERT_EQ( TEST_KEY3, it.get_key() );
+    ++it;
+    ASSERT_EQ( TEST_KEY4, it.get_key() );
     ++it;
     ASSERT_EQ( TEST_KEY1, it.get_key() );
     ++it;
@@ -68,10 +76,14 @@ TEST_F( test_prefix_tree, test_iterator_decrement )
     static const std::string TEST_KEY   = "abc";
     static const std::string TEST_KEY1  = "def";
     static const std::string TEST_KEY2  = "abcdef";
+    static const std::string TEST_KEY3  = "abcdeg";
+    static const std::string TEST_KEY4  = "abceee";
 
     ASSERT_TRUE( tree->append( TEST_KEY ) );
     ASSERT_TRUE( tree->append( TEST_KEY1 ) );
     ASSERT_TRUE( tree->append( TEST_KEY2 ) );
+    ASSERT_TRUE( tree->append( TEST_KEY3 ) );
+    ASSERT_TRUE( tree->append( TEST_KEY4 ) );
 
     auto it = tree->begin( true );
 
@@ -79,10 +91,20 @@ TEST_F( test_prefix_tree, test_iterator_decrement )
     ++it;
     ASSERT_EQ( TEST_KEY2, it.get_key() );
     it++;
+    ASSERT_EQ( TEST_KEY3, it.get_key() );
+    ++it;
+    ASSERT_EQ( TEST_KEY4, it.get_key() );
+    ++it;
     ASSERT_EQ( TEST_KEY1, it.get_key() );
 
     std::cout << "--------------\n";
 
+    --it;
+    ASSERT_EQ( TEST_KEY4, it.get_key() );
+    std::cout << "--\n";
+    --it;
+    ASSERT_EQ( TEST_KEY3, it.get_key() );
+    std::cout << "--\n";
     it--;
     ASSERT_EQ( TEST_KEY2, it.get_key() );
     std::cout << "--\n";
