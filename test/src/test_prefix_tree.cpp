@@ -112,3 +112,71 @@ TEST_F( test_prefix_tree, test_iterator_decrement )
     ASSERT_EQ( TEST_KEY, it.get_key() );
 }
 
+
+TEST_F( test_prefix_tree, test_iterator_all_nodes )
+{
+    static const std::string TEST_KEY   = "abc";
+    static const std::string TEST_KEY1  = "abcd";
+    static const std::string TEST_KEY2  = "abce";
+    static const std::string TEST_KEY3  = "def";
+    static const std::string TEST_KEY4  = "de1";
+    static const std::string TEST_KEY5  = "de2";
+
+    ASSERT_TRUE( tree->append( TEST_KEY ) );
+    ASSERT_TRUE( tree->append( TEST_KEY1 ) );
+    ASSERT_TRUE( tree->append( TEST_KEY2 ) );
+    ASSERT_TRUE( tree->append( TEST_KEY3 ) );
+    ASSERT_TRUE( tree->append( TEST_KEY4 ) );
+    ASSERT_TRUE( tree->append( TEST_KEY5 ) );
+
+    auto it = tree->begin( false );
+    ASSERT_EQ( "a", it.get_key() );
+    ++it;
+    ASSERT_EQ( "ab", it.get_key() );
+    it++;
+    ASSERT_EQ( "abc", it.get_key() );
+    ++it;
+    ASSERT_EQ( "abcd", it.get_key() );
+    ++it;
+    ASSERT_EQ( "abce", it.get_key() );
+    ++it;
+    ASSERT_EQ( "d", it.get_key() );
+    ++it;
+    ASSERT_EQ( "de", it.get_key() );
+    ++it;
+    ASSERT_EQ( "de1", it.get_key() );
+    ++it;
+    ASSERT_EQ( "de2", it.get_key() );
+    ++it;
+    ASSERT_EQ( "def", it.get_key() );
+    std::cout << "--\n";
+    --it;
+    ASSERT_EQ( "de2", it.get_key() );
+    std::cout << "--\n";
+    --it;
+    ASSERT_EQ( "de1", it.get_key() );
+    std::cout << "--\n";
+    --it;
+    ASSERT_EQ( "de", it.get_key() );
+    std::cout << "--\n";
+    --it;
+    ASSERT_EQ( "d", it.get_key() );
+    std::cout << "--\n";
+    --it;
+    ASSERT_EQ( "abce", it.get_key() );
+    std::cout << "--\n";
+    --it;
+    ASSERT_EQ( "abcd", it.get_key() );
+    std::cout << "--\n";
+    --it;
+    ASSERT_EQ( "abc", it.get_key() );
+    std::cout << "--\n";
+    --it;
+    ASSERT_EQ( "ab", it.get_key() );
+    std::cout << "--\n";
+    --it;
+    ASSERT_EQ( "a", it.get_key() );
+    std::cout << "--\n";
+    --it;
+    ASSERT_EQ( it, tree->end() );
+}

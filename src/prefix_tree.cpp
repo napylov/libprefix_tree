@@ -105,14 +105,16 @@ void prefix_tree::iterator::shift_iterator( bool forward )
     if ( !node )
         return;
 
+    std::cout << "DEBUG: shift_iterator() key = " << get_key() << "\n";
+
     prefix_tree *cur = node;
 
-    if ( !node->next.empty() )
+    if ( !node->next.empty() && forward )
     {
-        if ( forward )
+        //if ( forward )
             increment_via_next( node->next.begin(), node->next.end(), node );
-        else
-            decrement_via_next( node->next.rbegin(), node->next.rend(), node );
+        //else
+            //decrement_via_next( node->next.rbegin(), node->next.rend(), node );
     }
     else
         node = nullptr;
@@ -126,6 +128,8 @@ void prefix_tree::iterator::shift_iterator( bool forward )
         else
             decrement_via_parent();
     }
+
+    std::cout << "DEBUG: shift_iterator() result key = " << get_key() << "\n";
 }
 
 
@@ -199,7 +203,13 @@ void prefix_tree::iterator::increment_via_parent()
 
     ++next_it;
 
-    increment_via_parent( next_it, next_it_end, cur );
+    if ( next_it != next_it_end )
+        increment_via_parent( next_it, next_it_end, cur );
+    else
+    {
+        node = cur;
+        increment_via_parent();
+    }
 }
 
 
@@ -213,6 +223,7 @@ void prefix_tree::iterator::increment_via_parent(
     if ( !finite_nodes_only )
     {
         node = it != it_end ? it->second.get() : nullptr;
+        symbols.push_back( static_cast<unsigned char>( it->first )   );
         return;
     }
 
@@ -232,6 +243,7 @@ void prefix_tree::iterator::decrement_via_parent()
 
     if ( !node->parent )
     {
+        std::cout << "DEBUG: decrement_via_parent(): no parent\n";
         node = nullptr;
         return;
     }
@@ -240,22 +252,35 @@ void prefix_tree::iterator::decrement_via_parent()
     char c = static_cast<char>( symbols.back() );
     symbols.pop_back();
 
-    next_nodes_container::reverse_iterator next_it( cur->next.find( c ) );
-    next_nodes_container::reverse_iterator next_it_end = cur->next.rend();
+    next_nodes_container::iterator found_it = cur->next.find( c );
+    //next_nodes_container::reverse_iterator next_it(  );
+    //next_nodes_container::reverse_iterator next_it_end = cur->next.rend();
 
-    next_nodes_container::reverse_iterator tmp = next_it;
+    //next_nodes_container::reverse_iterator tmp = next_it;
 
-    ++next_it;
+    std::cout << "DEBUG: decrement_via_parent(): found_it->first = " << found_it->first << "\n";
+    //++next_it;
+    //std::cout << "DEBUG: decrement_via_parent(): next_it->first = " << next_it->first << "\n";
 
-    if ( next_it == tmp )
+    if ( found_it == cur->next.begin() )
     {
         node = cur;
         if ( !finite_nodes_only || cur->is_finite_node() )
+        {
+            if ( symbols.empty() )
+                node = nullptr;
             return;
+        }
         decrement_via_parent();
     }
     else
-        decrement_via_parent( next_it, next_it_end, cur );
+    {
+        decrement_via_parent(
+                    next_nodes_container::reverse_iterator( found_it ),
+                    cur->next.rend(),
+                    cur
+        );
+    }
 }
 
 
