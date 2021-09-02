@@ -1,1 +1,1 @@
-Реализовать prefix_tree_map.
+Implement possibility of using different STL containers to store pointers to child nodes.
