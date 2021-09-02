@@ -73,8 +73,8 @@ const prefix_tree* prefix_tree::find_node( const char *key, bool finite_node ) c
 
 
 
-prefix_tree::iterator::iterator( prefix_tree *node_, bool finite_nodes_only_, const char *key )
-: node( node_ ), finite_nodes_only( finite_nodes_only_ ), symbols()
+prefix_tree::iterator::iterator( const prefix_tree *node_, bool finite_nodes_only_, const char *key )
+: node( (prefix_tree*)node_ ), finite_nodes_only( finite_nodes_only_ ), symbols()
 {
     if ( key )
     {
@@ -395,6 +395,16 @@ bool prefix_tree::iterator::operator==( const iterator &right ) const
 std::string prefix_tree::iterator::get_key() const
 {
     return std::string( symbols.begin(), symbols.end() );
+}
+
+
+prefix_tree::iterator prefix_tree::find( const char *key, bool finite_node )
+{
+    const prefix_tree *found = find_node( key, finite_node );
+    return found ?
+                iterator( found, finite_node, key ) :
+                iterator()
+    ;
 }
 
 

@@ -17,6 +17,7 @@ set(
     TEST_SRC
     ${PREFIX_TREE_SRC}
     ${TEST_SRC_DIR}/test_prefix_tree.cpp
+    ${TEST_SRC_DIR}/test_prefix_tree_map.cpp
     ${TEST_SRC_DIR}/test_main.cpp
 )
 

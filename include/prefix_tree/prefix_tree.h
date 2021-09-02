@@ -49,25 +49,30 @@ protected:
 public:
     class iterator
     {
-    private:
+    protected:
         prefix_tree                 *node;
+    private:
         bool                        finite_nodes_only;
         std::deque<unsigned char>   symbols;
 
     public:
         iterator() : node( nullptr ), finite_nodes_only( false), symbols() {}
-        iterator( prefix_tree *node_, bool finite_nodes_only_, const char *key );
+        iterator( const prefix_tree *node_, bool finite_nodes_only_, const char *key );
+        iterator( const iterator &_ ) = default;
 
-        ~iterator() {}
+        ~iterator() = default;
 
+        iterator& operator=( const iterator &_ ) = default;
         iterator& operator++();
         iterator& operator--();
         iterator& operator++( int unused );
         iterator& operator--( int unused );
-        prefix_tree* operator->();
         bool operator==( const iterator &right ) const;
+        bool operator!=( const iterator &right ) const { return !operator==(right); };
 
         std::string get_key() const;
+    protected:
+        prefix_tree* operator->();
     private:
         void shift_iterator( bool forward );
 
@@ -156,17 +161,22 @@ public:
     }
 
 
+    iterator find( const char *key, bool finite_node );
+    inline iterator find( const std::string &key )
+    {
+        return find( key.c_str() );
+    }
+
+    iterator begin( bool finite_nodes_only );
+    iterator end();
+
+protected:
     inline bool is_finite_node() const
     {
         return flag == NODE_FLAG::FINITE_NODE;
     }
 
 
-    iterator begin( bool finite_nodes_only );
-    iterator end();
-
-
-protected:
     /**
      * @brief new_node      Factory method to create new child node.
      *                      NOTE! The function must be overload in derived class
