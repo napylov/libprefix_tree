@@ -105,31 +105,21 @@ void prefix_tree::iterator::shift_iterator( bool forward )
     if ( !node )
         return;
 
-    std::cout << "DEBUG: shift_iterator() key = " << get_key() << "\n";
-
     prefix_tree *cur = node;
 
     if ( !node->next.empty() && forward )
-    {
-        //if ( forward )
-            increment_via_next( node->next.begin(), node->next.end(), node );
-        //else
-            //decrement_via_next( node->next.rbegin(), node->next.rend(), node );
-    }
+        increment_via_next( node->next.begin(), node->next.end(), node );
     else
         node = nullptr;
 
     if ( !node )
     {
-        std::cout << "DEBUG: shift_iterator() !node\n";
         node = cur;
         if ( forward )
             increment_via_parent();
         else
             decrement_via_parent();
     }
-
-    std::cout << "DEBUG: shift_iterator() result key = " << get_key() << "\n";
 }
 
 
@@ -139,14 +129,6 @@ void prefix_tree::iterator::increment_via_next(
         prefix_tree *cur
 )
 {
-    std::cout << "DEBUG: increment_via_next(): ";
-    if ( it != it_end )
-        std::cout << ( it->first ) << "\n";
-    else
-    {
-        std::cout << "end\n";
-    }
-
     auto setup_node = [&] ()
     {
         symbols.push_back( static_cast<unsigned char>( it->first ) );
@@ -161,7 +143,6 @@ void prefix_tree::iterator::increment_via_next(
 
     while ( it != it_end )
     {
-        std::cout << "DEBUG: current char " << it->first << "\n";
         node = cur; // node may be setup to nullptr in previous iteration.
 
         setup_node();
@@ -186,8 +167,6 @@ void prefix_tree::iterator::increment_via_next(
 
 void prefix_tree::iterator::increment_via_parent()
 {
-    std::cout << "DEBUG: increment_via_parent(): key = " << get_key() << "\n";
-
     if ( !node->parent )
     {
         node = nullptr;
@@ -219,7 +198,6 @@ void prefix_tree::iterator::increment_via_parent(
         prefix_tree *cur
 )
 {
-    std::cout << "DEBUG: first char " << it->first << " finite_nodes_only " << finite_nodes_only << "\n";
     if ( !finite_nodes_only )
     {
         node = it != it_end ? it->second.get() : nullptr;
@@ -239,11 +217,8 @@ void prefix_tree::iterator::increment_via_parent(
 
 void prefix_tree::iterator::decrement_via_parent()
 {
-    std::cout << "DEBUG: decrement_via_parent(): key = " << get_key() << "\n";
-
     if ( !node->parent )
     {
-        std::cout << "DEBUG: decrement_via_parent(): no parent\n";
         node = nullptr;
         return;
     }
@@ -253,14 +228,6 @@ void prefix_tree::iterator::decrement_via_parent()
     symbols.pop_back();
 
     next_nodes_container::iterator found_it = cur->next.find( c );
-    //next_nodes_container::reverse_iterator next_it(  );
-    //next_nodes_container::reverse_iterator next_it_end = cur->next.rend();
-
-    //next_nodes_container::reverse_iterator tmp = next_it;
-
-    std::cout << "DEBUG: decrement_via_parent(): found_it->first = " << found_it->first << "\n";
-    //++next_it;
-    //std::cout << "DEBUG: decrement_via_parent(): next_it->first = " << next_it->first << "\n";
 
     if ( found_it == cur->next.begin() )
     {
@@ -290,8 +257,6 @@ void prefix_tree::iterator::decrement_via_parent(
         prefix_tree *cur
 )
 {
-    std::cout << "DEBUG: first char " << it->first << " finite_nodes_only " << finite_nodes_only << "\n";
-
     if ( !cur->next.empty() )
         decrement_via_next( it, it_end, cur );
     else
@@ -299,7 +264,6 @@ void prefix_tree::iterator::decrement_via_parent(
 
     if ( !node )
     {
-        std::cout << "DEBUG: decrement_via_parent(...) !node\n";
         if ( !finite_nodes_only || cur->is_finite_node() )
             node = cur;
         else
@@ -323,17 +287,12 @@ void prefix_tree::iterator::decrement_via_next(
         prefix_tree *cur
 )
 {
-    std::cout << "DEBUG: decrement_via_next()\n";
-
     while ( true )
     {
-        std::cout << "DEBUG: char " << it->first << "\n";
         if ( it->second->next.empty() )
         {
-            std::cout << "DEBUG: it->second->next.empty()\n";
             if ( it->second->is_finite_node() || !finite_nodes_only )
             {
-                std::cout << "DEBUG: return it->second\n";
                 node = it->second.get();
                 symbols.push_back( static_cast<unsigned char>( it->first ) );
                 return;
@@ -348,7 +307,6 @@ void prefix_tree::iterator::decrement_via_next(
 
             if ( node )
             {
-                std::cout << "DEBUG: decrement_via_next() node return\n";
                 return;
             }
 
@@ -358,7 +316,6 @@ void prefix_tree::iterator::decrement_via_next(
 
         if ( it == it_end )
         {
-            std::cout << "DEBUG: it == it_end\n";
             node = nullptr;
             return;
         }

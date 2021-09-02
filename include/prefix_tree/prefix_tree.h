@@ -56,8 +56,17 @@ public:
         std::deque<unsigned char>   symbols;
 
     public:
+        /// @brief iterator      Default constructor
         iterator() : node( nullptr ), finite_nodes_only( false), symbols() {}
+
+        /**
+         * @brief iterator              Constructor.
+         * @param node_                 Current node of prefix tree.
+         * @param finite_nodes_only_    Iterate via finite nodes only.
+         * @param key                   Key of node_.
+         */
         iterator( const prefix_tree *node_, bool finite_nodes_only_, const char *key );
+
         iterator( const iterator &_ ) = default;
 
         ~iterator() = default;
@@ -70,6 +79,10 @@ public:
         bool operator==( const iterator &right ) const;
         bool operator!=( const iterator &right ) const { return !operator==(right); };
 
+        /**
+         * @brief get_key
+         * @return          Key of current node.
+         */
         std::string get_key() const;
     protected:
         prefix_tree* operator->();
@@ -161,13 +174,41 @@ public:
     }
 
 
+    /**
+     * @brief find          Find key in tree.
+     * @param key           Key whose looking for.
+     * @param finite_node   If true find finite node only.
+     * @return              Iterator of found node. If not found return iterator equal to
+     *                      iterator returned by end().
+     */
     iterator find( const char *key, bool finite_node );
+
+
+    /**
+     * @brief find          Find key in tree.
+     * @param key           Key whose looking for.
+     * @param finite_node   If true find finite node only.
+     * @return              Iterator of found node. If not found return iterator equal to
+     *                      iterator returned by end().
+     */
     inline iterator find( const std::string &key )
     {
         return find( key.c_str() );
     }
 
+
+    /**
+     * @brief begin                 Get iterator to first node.
+     * @param finite_nodes_only     Iterate finite nodes only.
+     * @return                      Iterator to first node.
+     */
     iterator begin( bool finite_nodes_only );
+
+
+    /**
+     * @brief end
+     * @return      Invalid iterator to use in loop as marker of looping end.
+     */
     iterator end();
 
 protected:

@@ -14,7 +14,10 @@
 namespace prefix_tree
 {
 
-
+/**
+ * @brief prefix_tree_map       key => value container
+ *                              implemented as prefix tree.
+ */
 template <typename value_type>
 class prefix_tree_map : protected prefix_tree
 {
@@ -39,6 +42,11 @@ public:
             return *this;
         }
 
+
+        /**
+         * @brief get_value
+         * @return              Value of node.
+         */
         inline const value_type& get_value()
         {
             return static_cast<prefix_tree_map*>( node )->value;
@@ -61,6 +69,12 @@ public:
     virtual ~prefix_tree_map() = default;
 
 
+    /**
+     * @brief append    Append node to the tree.
+     * @param key       Key.
+     * @param value_    Value.
+     * @return          true if success
+     */
     inline bool append( const char *key, value_type &&value_ )
     {
         auto appended = append_node( key );
@@ -72,12 +86,24 @@ public:
     }
 
 
+    /**
+     * @brief append    Append node to the tree.
+     * @param key       Key.
+     * @param value_    Value.
+     * @return          true if success
+     */
     inline bool append( const std::string &key, value_type &&value_ )
     {
         return append( key.c_str(), value_ );
     }
 
 
+    /**
+     * @brief append    Append node to the tree.
+     * @param key       Key.
+     * @param value_    Value.
+     * @return          true if success
+     */
     inline bool append( const char *key, const value_type &value_ )
     {
         auto appended = append_node( key );
@@ -89,12 +115,24 @@ public:
     }
 
 
+    /**
+     * @brief append    Append node to the tree.
+     * @param key       Key.
+     * @param value_    Value.
+     * @return          true if success
+     */
     inline bool append( const std::string &key, const value_type &value_ )
     {
         return append( key.c_str(), value_ );
     }
 
 
+    /**
+     * @brief find      Find node by key.
+     * @param key       Key.
+     * @return          Iterator to found node or iterator equal
+     *                  iterator returned by end() if not found.
+     */
     iterator find( const char *key )
     {
         prefix_tree *found = (prefix_tree*)( find_node( key ) );
@@ -105,12 +143,22 @@ public:
     }
 
 
+    /**
+     * @brief find      Find node by key.
+     * @param key       Key.
+     * @return          Iterator to found node or iterator equal
+     *                  iterator returned by end() if not found.
+     */
     inline iterator find( const std::string &key )
     {
         return find( key.c_str() );
     }
 
 
+    /**
+     * @brief begin
+     * @return          Iterator to first node.
+     */
     iterator begin()
     {
         iterator it( this, nullptr );
@@ -120,6 +168,10 @@ public:
     }
 
 
+    /**
+     * @brief end
+     * @return          Invalid iterator to use in loop as end marker.
+     */
     iterator end() { return iterator(); }
 
 protected:
