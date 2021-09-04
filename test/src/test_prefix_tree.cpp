@@ -97,17 +97,12 @@ TEST_F( test_prefix_tree, test_iterator_decrement )
     ++it;
     ASSERT_EQ( TEST_KEY1, it.get_key() );
 
-    std::cout << "--------------\n";
-
     --it;
     ASSERT_EQ( TEST_KEY4, it.get_key() );
-    std::cout << "--\n";
     --it;
     ASSERT_EQ( TEST_KEY3, it.get_key() );
-    std::cout << "--\n";
     it--;
     ASSERT_EQ( TEST_KEY2, it.get_key() );
-    std::cout << "--\n";
     --it;
     ASSERT_EQ( TEST_KEY, it.get_key() );
 }
@@ -149,34 +144,66 @@ TEST_F( test_prefix_tree, test_iterator_all_nodes )
     ASSERT_EQ( "de2", it.get_key() );
     ++it;
     ASSERT_EQ( "def", it.get_key() );
-    std::cout << "--\n";
     --it;
     ASSERT_EQ( "de2", it.get_key() );
-    std::cout << "--\n";
     --it;
     ASSERT_EQ( "de1", it.get_key() );
-    std::cout << "--\n";
     --it;
     ASSERT_EQ( "de", it.get_key() );
-    std::cout << "--\n";
     --it;
     ASSERT_EQ( "d", it.get_key() );
-    std::cout << "--\n";
     --it;
     ASSERT_EQ( "abce", it.get_key() );
-    std::cout << "--\n";
     --it;
     ASSERT_EQ( "abcd", it.get_key() );
-    std::cout << "--\n";
     --it;
     ASSERT_EQ( "abc", it.get_key() );
-    std::cout << "--\n";
     --it;
     ASSERT_EQ( "ab", it.get_key() );
-    std::cout << "--\n";
     --it;
     ASSERT_EQ( "a", it.get_key() );
-    std::cout << "--\n";
     --it;
     ASSERT_EQ( it, tree->end() );
+}
+
+
+
+TEST_F( test_prefix_tree, test_remove )
+{
+    static const std::string TEST_KEY   = "abc";
+    static const std::string TEST_KEY1  = "abcdef";
+    static const std::string TEST_KEY2  = "d";
+    static const std::string TEST_KEY3  = "def";
+    static const std::string TEST_KEY4  = "c";
+
+    ASSERT_TRUE( tree->append( TEST_KEY ) );
+    ASSERT_TRUE( tree->append( TEST_KEY1 ) );
+    ASSERT_TRUE( tree->append( TEST_KEY2 ) );
+    ASSERT_TRUE( tree->append( TEST_KEY3 ) );
+
+    tree->remove( TEST_KEY1 );
+    tree->remove( TEST_KEY2 );
+    tree->remove( TEST_KEY4 );
+
+    auto it = tree->begin( true );
+    ASSERT_EQ( TEST_KEY, it.get_key() );
+    ++it;
+    ASSERT_EQ( TEST_KEY3, it.get_key() );
+    ++it;
+    ASSERT_EQ( it, tree->end() );
+
+    auto it1 = tree->begin( false );
+    ASSERT_EQ( "a", it1.get_key() );
+    ++it1;
+    ASSERT_EQ( "ab", it1.get_key() );
+    ++it1;
+    ASSERT_EQ( "abc", it1.get_key() );
+    ++it1;
+    ASSERT_EQ( "d", it1.get_key() );
+    ++it1;
+    ASSERT_EQ( "de", it1.get_key() );
+    ++it1;
+    ASSERT_EQ( "def", it1.get_key() );
+    ++it1;
+    ASSERT_EQ( it1, tree->end() );
 }

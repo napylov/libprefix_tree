@@ -147,7 +147,33 @@ public:
     inline bool append( const std::string &key )
     {
         return append_node( key ).second;
-    }    
+    }
+
+
+    /**
+     * @brief remove        Remove key from the prefix tree.
+     * @param key           Key of node. If a node of key if not finite
+     *                      the node will not be removed.
+     */
+    inline void remove( const std::string &key )
+    {
+        remove( key.c_str() );
+    }
+
+
+    /**
+     * @brief remove        Remove key from the prefix tree.
+     * @param key           Key of node. If a node of key if not finite
+     *                      the node will not be removed.
+     */
+    inline void remove( const char *key )
+    {
+        if ( !key )
+            return;
+
+        if ( remove_node( key, 0 ) )
+            next.erase( *key );
+    }
 
 
     /**
@@ -246,6 +272,17 @@ protected:
     {
         return append_node( key.c_str() );
     }
+
+
+    /**
+     * @brief remove_node   Remove node.
+     * @param key           Key of node.
+     * @param pos           Current symbol position in key.
+     * @return              true if node must be removed.
+     *                      If returned false node marked as non finite but
+     *                      not removed.
+     */
+    bool remove_node( const char *key, unsigned int pos );
 
 
     /**

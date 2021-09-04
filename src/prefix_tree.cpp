@@ -52,6 +52,36 @@ std::pair<prefix_tree&, bool> prefix_tree::append_node( const char *key )
 
 
 
+bool prefix_tree::remove_node( const char *key, unsigned int pos )
+{
+    if ( !key[ pos ] )
+    {
+        if ( !pos )
+            return false;
+
+        if ( is_finite_node() && next.empty() )
+            return true;
+
+        flag = NODE_FLAG::NO_FLAGS;
+        return false;
+    }
+
+    auto it = next.find( key[ pos ] );
+    if ( it == next.end() )
+        return false;
+
+    if ( !it->second->remove_node( key, ++pos ) )
+        return false;
+
+    if ( next.size() <= 1 && !is_finite_node() )
+        return true;
+
+    next.erase( it );
+    return false;
+}
+
+
+
 const prefix_tree* prefix_tree::find_node( const char *key, bool finite_node ) const
 {
     if ( !key )
