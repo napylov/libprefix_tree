@@ -156,6 +156,30 @@ public:
 
 
     /**
+     * @brief exists        Check key or prefix is exist.
+     * @param key           Key ot prefix.
+     * @param finite_node   If true looking for finite node only else prefix or finite node.
+     * @return              true if key or prefix is exist.
+     */
+    inline bool exists( const char *key, bool finite_node = true ) const
+    {
+        return prefix_tree::exists(key, finite_node);
+    }
+
+
+    /**
+     * @brief exists        Check key or prefix is exist.
+     * @param key           Key ot prefix.
+     * @param finite_node   If true looking for finite node only else prefix or finite node.
+     * @return              true if key or prefix is exist.
+     */
+    inline bool exists( const std::string &key, bool finite_node = true ) const
+    {
+        return prefix_tree::exists(key, finite_node);
+    }
+
+
+    /**
      * @brief begin
      * @return          Iterator to first node.
      */
