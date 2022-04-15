@@ -207,3 +207,19 @@ TEST_F( test_prefix_tree, test_remove )
     ++it1;
     ASSERT_EQ( it1, tree->end() );
 }
+
+
+TEST_F( test_prefix_tree, test_operator_bool )
+{
+    static const std::string TEST_KEY   = "abc";
+    static const std::string TEST_KEY1  = "abcdef";
+
+    ASSERT_TRUE( tree->append( TEST_KEY ) );
+    ASSERT_TRUE( tree->append( TEST_KEY1 ) );
+
+    auto it = tree->begin( true );
+    ASSERT_TRUE( it.operator bool() );
+
+    auto it_end = tree->end();
+    ASSERT_FALSE( it_end.operator bool() );
+}

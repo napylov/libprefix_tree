@@ -79,6 +79,8 @@ public:
         bool operator==( const iterator &right ) const;
         bool operator!=( const iterator &right ) const { return !operator==(right); };
 
+        operator bool() const { return node != nullptr; }
+
         /**
          * @brief get_key
          * @return          Key of current node.
